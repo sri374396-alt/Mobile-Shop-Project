@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartRecharge - Mobile Shop Management System</title>
+  <meta name="description" content="Professional Smart Mobile Recharge Management System for retail recharge shops. Track transactions, analytics, and customer history.">
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Chart.js for Reports -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- App Container -->
+  <div class="app-layout">
+    
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <!-- ==================== 1. SIDEBAR ==================== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-wrapper">
+          <div class="logo-icon-box">
+            <i class="fa-solid fa-bolt-lightning"></i>
+          </div>
+          <div class="logo-text">
+            <span class="logo-brand">Smart<span class="accent-text">Recharge</span></span>
+            <span class="logo-sub">Mobile Shop Management</span>
+          </div>
+        </div>
+        <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close sidebar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="sidebar-nav-container">
+        <div class="nav-section-title">MAIN MENU</div>
+        <nav class="sidebar-nav">
+          <button class="nav-link active" data-page="dashboard" id="navDashboard">
+            <span class="nav-icon"><i class="fa-solid fa-chart-pie"></i></span>
+            <span class="nav-text">Dashboard</span>
+            <span class="nav-indicator"></span>
+          </button>
+          <button class="nav-link" data-page="add-recharge" id="navAddRecharge">
+            <span class="nav-icon"><i class="fa-solid fa-circle-plus"></i></span>
+            <span class="nav-text">Add Recharge</span>
+            <span class="nav-badge pulse">NEW</span>
+          </button>
+          <button class="nav-link" data-page="history" id="navHistory">
+            <span class="nav-icon"><i class="fa-solid fa-clock-rotate-left"></i></span>
+            <span class="nav-text">Recharge History</span>
+          </button>
+          <button class="nav-link" data-page="customers" id="navCustomers">
+            <span class="nav-icon"><i class="fa-solid fa-users"></i></span>
+            <span class="nav-text">Customers</span>
+          </button>
+          <button class="nav-link" data-page="reports" id="navReports">
+            <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
+            <span class="nav-text">Reports</span>
+          </button>
+          <button class="nav-link" data-page="settings" id="navSettings">
+            <span class="nav-icon"><i class="fa-solid fa-gear"></i></span>
+            <span class="nav-text">Settings</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Quick Action Card in Sidebar -->
+      <div class="sidebar-footer-widget">
+        <div class="shop-badge">
+          <div class="shop-status-dot"></div>
+          <div>
+            <div class="shop-name-label">SRI KRISHNA MOBILES</div>
+            <div class="shop-status-text">Terminal Online</div>
+          </div>
+        </div>
+        <button class="quick-recharge-btn" id="sidebarQuickRechargeBtn">
+          <i class="fa-solid fa-bolt"></i> Instant Recharge
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      
+      <!-- ==================== 2. TOP HEADER ==================== -->
+      <header class="top-header">
+        <div class="header-left">
+          <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open Navigation">
+            <i class="fa-solid fa-bars-staggered"></i>
+          </button>
+          <div class="header-titles">
+            <h1 class="header-main-title">Smart Recharge Management</h1>
+            <p class="header-sub-title">Manage your shop recharges easily</p>
+          </div>
+        </div>
+
+        <div class="header-center">
+          <div class="header-search-bar">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="globalSearchInput" placeholder="Search customer, mobile, or Txn ID..." autocomplete="off">
+            <span class="search-shortcut">⌘K</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Live Date Display -->
+          <div class="header-date-badge" id="currentDateBadge">
+            <i class="fa-regular fa-calendar-days"></i>
+            <span id="headerCurrentDate">Wednesday, 07 Oct 2026</span>
+          </div>
+
+          <!-- Notification Dropdown -->
+          <div class="notification-dropdown-wrapper">
+            <button class="header-icon-btn" id="notificationBtn" aria-label="Notifications" title="Notifications">
+              <i class="fa-regular fa-bell"></i>
+              <span class="notif-badge" id="notifCount">3</span>
+            </button>
+            <div class="dropdown-panel notif-panel" id="notifPanel">
+              <div class="panel-header">
+                <h3>Notifications</h3>
+                <span class="panel-tag">Shop Alerts</span>
+              </div>
+              <ul class="notif-list">
+                <li class="notif-item unread">
+                  <span class="notif-bullet success"></span>
+                  <div>
+                    <p class="notif-msg">System data sync completed</p>
+                    <span class="notif-time">Just now</span>
+                  </div>
+                </li>
+                <li class="notif-item unread">
+                  <span class="notif-bullet info"></span>
+                  <div>
+                    <p class="notif-msg">Jio ₹299 plan prices updated</p>
+                    <span class="notif-time">15m ago</span>
+                  </div>
+                </li>
+                <li class="notif-item">
+                  <span class="notif-bullet purple"></span>
+                  <div>
+                    <p class="notif-msg">Daily summary ready to export</p>
+                    <span class="notif-time">1 hr ago</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Profile Badge -->
+          <div class="profile-chip" id="profileChip">
+            <div class="profile-avatar">
+              <span>S</span>
+              <div class="online-indicator"></div>
+            </div>
+            <div class="profile-details">
+              <span class="profile-name">Sriram</span>
+              <span class="profile-role">Shop Manager</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Scrollable Main Viewport -->
+      <main class="content-viewport" id="contentViewport">
+        
+        <!-- ==================== 3. DASHBOARD VIEW ==================== -->
+        <section class="page-view active" id="view-dashboard">
+          
+          <!-- Dashboard Action Header -->
+          <div class="dashboard-banner">
+            <div class="banner-text">
+              <h2 class="dashboard-hero-title">Recharge Dashboard</h2>
+              <p class="dashboard-hero-sub">Track your daily recharge business in one place.</p>
+            </div>
+            <div class="banner-actions">
+              <button class="btn btn-outline" id="btnExportData">
+                <i class="fa-solid fa-file-arrow-down"></i> Export Summary
+              </button>
+              <button class="btn btn-primary-glow" id="btnDashNewRecharge">
+                <i class="fa-solid fa-plus"></i> + New Recharge
+              </button>
+            </div>
+          </div>
+
+          <!-- Stats Grid -->
+          <div class="stats-grid">
+            <!-- 1. Total Recharges -->
+            <div class="stat-card" data-stat="total">
+              <div class="stat-card-top">
+                <div class="stat-icon-wrap icon-blue">
+                  <i class="fa-solid fa-tower-broadcast"></i>
+                </div>
+                <span class="stat-badge trend-up">+12% total</span>
+              </div>
+              <div class="stat-card-body">
+                <div class="stat-value" id="statTotalRecharges">0</div>
+                <div class="stat-label">Total Recharges</div>
+              </div>
+            </div>
+
+            <!-- 2. Today's Recharges -->
+            <div class="stat-card" data-stat="today">
+              <div class="stat-card-top">
+                <div class="stat-icon-wrap icon-cyan">
+                  <i class="fa-solid fa-calendar-day"></i>
+                </div>
+                <span class="stat-badge trend-neutral">Today</span>
+              </div>
+              <div class="stat-card-body">
+                <div class="stat-value" id="statTodayRecharges">0</div>
+                <div class="stat-label">Today's Recharges</div>
+              </div>
+            </div>
+
+            <!-- 3. Today's Collection -->
+            <div class="stat-card stat-card-featured" data-stat="revenue">
+              <div class="stat-card-top">
+                <div class="stat-icon-wrap icon-purple">
+                  <i class="fa-solid fa-indian-rupee-sign"></i>
+                </div>
+                <span class="stat-badge trend-up">Cash Flow</span>
+              </div>
+              <div class="stat-card-body">
+                <div class="stat-value highlight-amount">₹<span id="statTodayCollection">0</span></div>
+                <div class="stat-label">Today's Collection</div>
+              </div>
+            </div>
+
+            <!-- 4. Successful Recharges -->
+            <div class="stat-card" data-stat="success">
+              <div class="stat-card-top">
+                <div class="stat-icon-wrap icon-green">
+                  <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <span class="stat-badge trend-green" id="statSuccessRate">100% Rate</span>
+              </div>
+              <div class="stat-card-body">
+                <div class="stat-value text-success" id="statSuccessfulRecharges">0</div>
+                <div class="stat-label">Successful Recharges</div>
+              </div>
+            </div>
+
+            <!-- 5. Failed Recharges -->
+            <div class="stat-card" data-stat="failed">
+              <div class="stat-card-top">
+                <div class="stat-icon-wrap icon-red">
+                  <i class="fa-solid fa-circle-xmark"></i>
+                </div>
+                <span class="stat-badge trend-red">Attention</span>
+              </div>
+              <div class="stat-card-body">
+                <div class="stat-value text-danger" id="statFailedRecharges">0</div>
+                <div class="stat-label">Failed Recharges</div>
+              </div>
+            </div>
+
+            <!-- 6. Total Customers -->
+            <div class="stat-card" data-stat="customers">
+              <div class="stat-card-top">
+                <div class="stat-icon-wrap icon-amber">
+                  <i class="fa-solid fa-address-book"></i>
+                </div>
+                <span class="stat-badge trend-neutral">Unique</span>
+              </div>
+              <div class="stat-card-body">
+                <div class="stat-value" id="statTotalCustomers">0</div>
+                <div class="stat-label">Total Customers</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Operator Bar -->
+          <div class="operator-bar-card">
+            <div class="bar-header">
+              <span class="bar-title"><i class="fa-solid fa-sim-card"></i> Supported Telecom Operators</span>
+              <span class="bar-subtitle">Instant Recharge Gateway Available</span>
+            </div>
+            <div class="operator-pills">
+              <div class="op-pill jio">
+                <span class="op-pill-dot jio-bg"></span> Jio 5G / 4G
+              </div>
+              <div class="op-pill airtel">
+                <span class="op-pill-dot airtel-bg"></span> Airtel 5G Plus
+              </div>
+              <div class="op-pill vi">
+                <span class="op-pill-dot vi-bg"></span> Vodafone Idea (Vi)
+              </div>
+              <div class="op-pill bsnl">
+                <span class="op-pill-dot bsnl-bg"></span> BSNL Mobile
+              </div>
+            </div>
+          </div>
+
+          <!-- ==================== 4. RECENT TRANSACTIONS ==================== -->
+          <div class="content-card recent-txns-section">
+            <div class="card-header">
+              <div class="card-header-titles">
+                <h3 class="card-title">Recent Transactions</h3>
+                <p class="card-subtitle">Real-time recharge activity from your shop counter</p>
+              </div>
+              <div class="card-header-actions">
+                <button class="btn btn-sm btn-outline" id="btnViewAllHistory">
+                  View Full History <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Transactions Table -->
+            <div class="table-responsive">
+              <table class="data-table" id="dashboardTxnTable">
+                <thead>
+                  <tr>
+                    <th>Customer Name</th>
+                    <th>Mobile Number</th>
+                    <th>Operator</th>
+                    <th>Recharge Amount</th>
+                    <th>Payment Method</th>
+                    <th>Status</th>
+                    <th>Time</th>
+                    <th class="text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboardTxnBody">
+                  <!-- Populated via JavaScript -->
+                </tbody>
+              </table>
+              <div class="empty-state-wrap hidden" id="dashEmptyState">
+                <div class="empty-icon"><i class="fa-solid fa-receipt"></i></div>
+                <p class="empty-title">No transactions recorded yet</p>
+                <p class="empty-desc">Click '+ New Recharge' to record your first mobile recharge!</p>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ==================== 5. ADD RECHARGE PAGE ==================== -->
+        <section class="page-view" id="view-add-recharge">
+          <div class="page-header-flex">
+            <div>
+              <h2 class="view-title">New Mobile Recharge</h2>
+              <p class="view-subtitle">Process a quick customer recharge and issue receipt token.</p>
+            </div>
+            <button class="btn btn-outline" id="btnCancelAddRecharge">
+              <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+            </button>
+          </div>
+
+          <div class="form-layout-grid">
+            <!-- Main Form Card -->
+            <div class="content-card form-card">
+              <form id="rechargeForm" autocomplete="off">
+                <input type="hidden" id="editRechargeId" value="">
+
+                <!-- Section 1: Customer Details -->
+                <div class="form-section">
+                  <div class="form-section-title">
+                    <span class="section-num">1</span>
+                    <div class="section-title-wrap">
+                      <h4>Customer Details</h4>
+                      <p>Enter consumer contact information</p>
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="customerName" class="form-label required">Customer Name</label>
+                      <div class="input-icon-box">
+                        <i class="fa-regular fa-user"></i>
+                        <input type="text" id="customerName" class="form-input" placeholder="e.g. Ramesh Kumar" required>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="mobileNumber" class="form-label required">Mobile Number</label>
+                      <div class="input-icon-box">
+                        <span class="phone-prefix">+91</span>
+                        <input type="tel" id="mobileNumber" class="form-input" placeholder="9876543210" maxlength="10" pattern="[0-9]{10}" required>
+                      </div>
+                      <span class="input-hint">10 digit Indian mobile number</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Section 2: Recharge Details -->
+                <div class="form-section">
+                  <div class="form-section-title">
+                    <span class="section-num">2</span>
+                    <div class="section-title-wrap">
+                      <h4>Recharge Details</h4>
+                      <p>Select telecom operator and chosen plan</p>
+                    </div>
+                  </div>
+
+                  <!-- Operator Selection Cards -->
+                  <div class="form-group">
+                    <label class="form-label required">Select Telecom Operator</label>
+                    <div class="operator-select-grid" id="operatorSelectGrid">
+                      <label class="op-select-card active">
+                        <input type="radio" name="operatorRadio" value="Jio" checked>
+                        <div class="op-card-content">
+                          <span class="op-icon jio-icon"><i class="fa-solid fa-signal"></i></span>
+                          <span class="op-name">Jio 5G</span>
+                          <span class="op-tag">Reliance</span>
+                        </div>
+                      </label>
+
+                      <label class="op-select-card">
+                        <input type="radio" name="operatorRadio" value="Airtel">
+                        <div class="op-card-content">
+                          <span class="op-icon airtel-icon"><i class="fa-solid fa-tower-broadcast"></i></span>
+                          <span class="op-name">Airtel</span>
+                          <span class="op-tag">Bharti</span>
+                        </div>
+                      </label>
+
+                      <label class="op-select-card">
+                        <input type="radio" name="operatorRadio" value="Vi">
+                        <div class="op-card-content">
+                          <span class="op-icon vi-icon"><i class="fa-solid fa-wifi"></i></span>
+                          <span class="op-name">Vi</span>
+                          <span class="op-tag">Vodafone Idea</span>
+                        </div>
+                      </label>
+
+                      <label class="op-select-card">
+                        <input type="radio" name="operatorRadio" value="BSNL">
+                        <div class="op-card-content">
+                          <span class="op-icon bsnl-icon"><i class="fa-solid fa-satellite-dish"></i></span>
+                          <span class="op-name">BSNL</span>
+                          <span class="op-tag">Govt Telecom</span>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Quick Popular Plans Picker -->
+                  <div class="form-group">
+                    <label class="form-label">Quick Popular Plans (Click to auto-fill)</label>
+                    <div class="plan-chips-grid" id="planChipsGrid">
+                      <button type="button" class="plan-chip" data-amount="239" data-plan="1.5 GB/Day | 28 Days | Unlimited Calls">
+                        <span class="chip-amt">₹239</span>
+                        <span class="chip-desc">1.5GB/Day (28d)</span>
+                      </button>
+                      <button type="button" class="plan-chip" data-amount="299" data-plan="2 GB/Day + 5G | 28 Days | 100 SMS/day">
+                        <span class="chip-amt">₹299</span>
+                        <span class="chip-desc">2GB/Day + 5G (28d)</span>
+                      </button>
+                      <button type="button" class="plan-chip" data-amount="666" data-plan="1.5 GB/Day | 84 Days | Unlimited Voice">
+                        <span class="chip-amt">₹666</span>
+                        <span class="chip-desc">1.5GB/Day (84d)</span>
+                      </button>
+                      <button type="button" class="plan-chip" data-amount="799" data-plan="2 GB/Day + True 5G | 84 Days">
+                        <span class="chip-amt">₹799</span>
+                        <span class="chip-desc">2GB/Day (84d)</span>
+                      </button>
+                      <button type="button" class="plan-chip" data-amount="19" data-plan="1 GB Data Booster | Existing Validity">
+                        <span class="chip-amt">₹19</span>
+                        <span class="chip-desc">1GB Add-on</span>
+                      </button>
+                      <button type="button" class="plan-chip" data-amount="155" data-plan="24 Days Unlimited Calls | 2 GB Total">
+                        <span class="chip-amt">₹155</span>
+                        <span class="chip-desc">24d Calling</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group flex-2">
+                      <label for="planDetails" class="form-label required">Plan Description</label>
+                      <div class="input-icon-box">
+                        <i class="fa-solid fa-list-check"></i>
+                        <input type="text" id="planDetails" class="form-input" placeholder="e.g. 1.5 GB/Day | 28 Days | Unlimited Calls" required>
+                      </div>
+                    </div>
+
+                    <div class="form-group flex-1">
+                      <label for="rechargeAmount" class="form-label required">Amount (₹)</label>
+                      <div class="input-icon-box">
+                        <span class="phone-prefix">₹</span>
+                        <input type="number" id="rechargeAmount" class="form-input bold-number" placeholder="299" min="10" max="10000" required>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Section 3: Payment Details -->
+                <div class="form-section">
+                  <div class="form-section-title">
+                    <span class="section-num">3</span>
+                    <div class="section-title-wrap">
+                      <h4>Payment & Status</h4>
+                      <p>Tender method and recharge delivery status</p>
+                    </div>
+                  </div>
+
+                  <!-- Payment Method Selection Cards -->
+                  <div class="form-group">
+                    <label class="form-label required">Payment Method</label>
+                    <div class="payment-select-grid" id="paymentSelectGrid">
+                      <label class="pay-select-card active">
+                        <input type="radio" name="paymentRadio" value="UPI" checked>
+                        <div class="pay-card-content">
+                          <i class="fa-solid fa-qrcode"></i>
+                          <span>UPI / QR</span>
+                        </div>
+                      </label>
+
+                      <label class="pay-select-card">
+                        <input type="radio" name="paymentRadio" value="Cash">
+                        <div class="pay-card-content">
+                          <i class="fa-solid fa-money-bill-wave"></i>
+                          <span>Cash</span>
+                        </div>
+                      </label>
+
+                      <label class="pay-select-card">
+                        <input type="radio" name="paymentRadio" value="Debit Card">
+                        <div class="pay-card-content">
+                          <i class="fa-regular fa-credit-card"></i>
+                          <span>Debit Card</span>
+                        </div>
+                      </label>
+
+                      <label class="pay-select-card">
+                        <input type="radio" name="paymentRadio" value="Net Banking">
+                        <div class="pay-card-content">
+                          <i class="fa-solid fa-building-columns"></i>
+                          <span>Net Banking</span>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Status Select -->
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="rechargeStatus" class="form-label required">Recharge Status</label>
+                      <div class="input-icon-box">
+                        <i class="fa-solid fa-circle-dot"></i>
+                        <select id="rechargeStatus" class="form-input form-select" required>
+                          <option value="SUCCESS" selected>SUCCESS (Immediate Confirm)</option>
+                          <option value="PENDING">PENDING (Awaiting Operator ACK)</option>
+                          <option value="FAILED">FAILED (Network/Balance Error)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="transactionNotes" class="form-label">Shop Note / Ref (Optional)</label>
+                      <div class="input-icon-box">
+                        <i class="fa-regular fa-note-sticky"></i>
+                        <input type="text" id="transactionNotes" class="form-input" placeholder="e.g. Counter Txn #04">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Form Submit Action Bar -->
+                <div class="form-action-bar">
+                  <button type="button" class="btn btn-outline" id="btnResetForm">
+                    <i class="fa-solid fa-rotate-left"></i> Reset Form
+                  </button>
+                  <button type="submit" class="btn btn-primary-glow btn-lg" id="btnSubmitRecharge">
+                    <i class="fa-solid fa-bolt"></i> Recharge Now
+                  </button>
+                </div>
+
+              </form>
+            </div>
+
+            <!-- Side Helper / Shop Info Widget -->
+            <div class="form-side-widget">
+              <!-- Live Summary Preview Card -->
+              <div class="content-card preview-card">
+                <div class="preview-header">
+                  <div class="preview-badge"><i class="fa-solid fa-receipt"></i> LIVE PREVIEW</div>
+                  <span class="preview-tag">Token Slip</span>
+                </div>
+                <div class="preview-body">
+                  <div class="preview-shop">SRI KRISHNA MOBILES</div>
+                  <div class="preview-divider"></div>
+                  <div class="preview-item">
+                    <span class="p-label">Customer:</span>
+                    <span class="p-val" id="prevCustomer">--</span>
+                  </div>
+                  <div class="preview-item">
+                    <span class="p-label">Mobile:</span>
+                    <span class="p-val" id="prevMobile">--</span>
+                  </div>
+                  <div class="preview-item">
+                    <span class="p-label">Operator:</span>
+                    <span class="p-val" id="prevOperator">Jio</span>
+                  </div>
+                  <div class="preview-item">
+                    <span class="p-label">Payment:</span>
+                    <span class="p-val" id="prevPayment">UPI</span>
+                  </div>
+                  <div class="preview-divider"></div>
+                  <div class="preview-item total-item">
+                    <span class="p-label">Total Payable:</span>
+                    <span class="p-val amount-val">₹<span id="prevAmount">0</span></span>
+                  </div>
+                </div>
+                <div class="preview-footer">
+                  <i class="fa-solid fa-shield-halved"></i> 100% Encrypted & Logged
+                </div>
+              </div>
+
+              <!-- Shop Policy Notice -->
+              <div class="content-card tip-card">
+                <h4><i class="fa-solid fa-circle-info"></i> Operator Notice</h4>
+                <p>Ensure customer mobile digits are thoroughly verified before confirming. All transactions are logged instantly in browser storage with tamper-proof timestamps.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ==================== 6. RECHARGE HISTORY ==================== -->
+        <section class="page-view" id="view-history">
+          <div class="page-header-flex">
+            <div>
+              <h2 class="view-title">Recharge History</h2>
+              <p class="view-subtitle">Detailed audit log of all customer transactions with search and filters</p>
+            </div>
+            <div class="banner-actions">
+              <button class="btn btn-outline" id="btnExportCSV">
+                <i class="fa-solid fa-file-csv"></i> Export CSV
+              </button>
+              <button class="btn btn-primary-glow" id="btnHistoryNewRecharge">
+                <i class="fa-solid fa-plus"></i> New Recharge
+              </button>
+            </div>
+          </div>
+
+          <!-- Filter Toolbar Card -->
+          <div class="content-card filter-toolbar-card">
+            <div class="filter-grid">
+              <!-- Search -->
+              <div class="filter-item search-filter">
+                <label class="filter-label">Search Record</label>
+                <div class="input-icon-box">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input type="text" id="historySearchInput" class="form-input" placeholder="Search by name, mobile, ID...">
+                </div>
+              </div>
+
+              <!-- Operator Filter -->
+              <div class="filter-item">
+                <label class="filter-label">Filter Operator</label>
+                <select id="historyOperatorFilter" class="form-input form-select">
+                  <option value="ALL">All Operators</option>
+                  <option value="Jio">Jio</option>
+                  <option value="Airtel">Airtel</option>
+                  <option value="Vi">Vi</option>
+                  <option value="BSNL">BSNL</option>
+                </select>
+              </div>
+
+              <!-- Status Filter -->
+              <div class="filter-item">
+                <label class="filter-label">Filter Status</label>
+                <select id="historyStatusFilter" class="form-input form-select">
+                  <option value="ALL">All Statuses</option>
+                  <option value="SUCCESS">Success</option>
+                  <option value="PENDING">Pending</option>
+                  <option value="FAILED">Failed</option>
+                </select>
+              </div>
+
+              <!-- Date Filter -->
+              <div class="filter-item">
+                <label class="filter-label">Filter by Date</label>
+                <input type="date" id="historyDateFilter" class="form-input">
+              </div>
+
+              <!-- Reset Filters -->
+              <div class="filter-item reset-btn-wrap">
+                <label class="filter-label">&nbsp;</label>
+                <button type="button" class="btn btn-outline" id="btnResetFilters" title="Clear all filters">
+                  <i class="fa-solid fa-filter-circle-xmark"></i> Clear
+                </button>
+              </div>
+            </div>
+
+            <!-- Active Filter Chips -->
+            <div class="filter-chips-row" id="activeFilterChips">
+              <!-- Dynamically rendered -->
+            </div>
+          </div>
+
+          <!-- History Table Card -->
+          <div class="content-card">
+            <div class="card-header">
+              <div class="card-header-titles">
+                <h3 class="card-title">All Transactions</h3>
+                <span class="records-count-badge" id="historyRecordsBadge">Showing 0 records</span>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table" id="historyTable">
+                <thead>
+                  <tr>
+                    <th>Txn ID</th>
+                    <th>Customer Name</th>
+                    <th>Mobile</th>
+                    <th>Operator</th>
+                    <th>Plan Details</th>
+                    <th>Amount</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Date & Time</th>
+                    <th class="text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                  <!-- Rendered via JS -->
+                </tbody>
+              </table>
+
+              <div class="empty-state-wrap hidden" id="historyEmptyState">
+                <div class="empty-icon"><i class="fa-solid fa-search"></i></div>
+                <p class="empty-title">No transactions match your search</p>
+                <p class="empty-desc">Try clearing filters or search with a different keyword.</p>
+                <button class="btn btn-outline btn-sm mt-3" id="btnClearHistorySearch">Reset All Filters</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ==================== 7. CUSTOMERS ==================== -->
+        <section class="page-view" id="view-customers">
+          <div class="page-header-flex">
+            <div>
+              <h2 class="view-title">Customer Directory</h2>
+              <p class="view-subtitle">Aggregated customer profiles, recharge frequencies, and lifetime value</p>
+            </div>
+            <div class="header-search-bar customer-search">
+              <i class="fa-solid fa-magnifying-glass search-icon"></i>
+              <input type="text" id="customerSearchInput" placeholder="Search customer name or mobile...">
+            </div>
+          </div>
+
+          <!-- Customers Cards Grid -->
+          <div class="customer-cards-grid" id="customersGrid">
+            <!-- Rendered via JS -->
+          </div>
+
+          <div class="empty-state-wrap hidden" id="customerEmptyState">
+            <div class="empty-icon"><i class="fa-solid fa-user-xmark"></i></div>
+            <p class="empty-title">No customers found</p>
+            <p class="empty-desc">Add a recharge to automatically register customer profiles.</p>
+          </div>
+        </section>
+
+
+        <!-- ==================== 8. REPORTS & ANALYTICS ==================== -->
+        <section class="page-view" id="view-reports">
+          <div class="page-header-flex">
+            <div>
+              <h2 class="view-title">Business Analytics & Reports</h2>
+              <p class="view-subtitle">Visual performance trends computed directly from localStorage transactions</p>
+            </div>
+            <div class="banner-actions">
+              <button class="btn btn-outline" id="btnPrintReport">
+                <i class="fa-solid fa-print"></i> Print Report
+              </button>
+            </div>
+          </div>
+
+          <!-- Key Metrics Row -->
+          <div class="stats-grid mb-4">
+            <div class="stat-card">
+              <div class="stat-card-top">
+                <div class="stat-icon-wrap icon-purple">
+                  <i class="fa-solid fa-coins"></i>
+                </div>
+                <span class="stat-badge trend-up">Lifetime</span>
+              </div>
+              <div class="stat-card-body">
+                <div class="stat-value">₹<span id="repTotalRevenue">0</span></div>
+                <div class="stat-label">Total Revenue Generated</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-card-top">
+                <div class="stat-icon-wrap icon-blue">
+                  <i class="fa-solid fa-scale-balanced"></i>
+                </div>
+                <span class="stat-badge trend-neutral">Avg Ticket</span>
+              </div>
+              <div class="stat-card-body">
+                <div class="stat-value">₹<span id="repAvgAmount">0</span></div>
+                <div class="stat-label">Average Recharge Value</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-card-top">
+                <div class="stat-icon-wrap icon-green">
+                  <i class="fa-solid fa-thumbs-up"></i>
+                </div>
+                <span class="stat-badge trend-green">Reliability</span>
+              </div>
+              <div class="stat-card-body">
+                <div class="stat-value text-success" id="repSuccessRate">0%</div>
+                <div class="stat-label">Success Completion Rate</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-card-top">
+                <div class="stat-icon-wrap icon-cyan">
+                  <i class="fa-solid fa-crown"></i>
+                </div>
+                <span class="stat-badge trend-up">Popular</span>
+              </div>
+              <div class="stat-card-body">
+                <div class="stat-value" id="repTopOperator">--</div>
+                <div class="stat-label">Top Telecom Operator</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts Row 1 -->
+          <div class="charts-grid">
+            <!-- Chart 1: Daily Collection Trend -->
+            <div class="content-card chart-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Daily Collection Trend</h3>
+                  <p class="card-subtitle">Revenue volume over time (₹)</p>
+                </div>
+                <div class="chart-tag"><i class="fa-solid fa-chart-line"></i> Timeline</div>
+              </div>
+              <div class="chart-container">
+                <canvas id="dailyCollectionChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Chart 2: Success vs Failed vs Pending -->
+            <div class="content-card chart-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Successful vs Failed</h3>
+                  <p class="card-subtitle">Transaction status distribution</p>
+                </div>
+                <div class="chart-tag"><i class="fa-solid fa-chart-pie"></i> Ratio</div>
+              </div>
+              <div class="chart-container doughnut-container">
+                <canvas id="statusChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts Row 2 -->
+          <div class="charts-grid mt-4">
+            <!-- Chart 3: Operator-Wise Recharges -->
+            <div class="content-card chart-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Operator-Wise Recharges</h3>
+                  <p class="card-subtitle">Volume share per telecom network</p>
+                </div>
+                <div class="chart-tag"><i class="fa-solid fa-tower-broadcast"></i> Operators</div>
+              </div>
+              <div class="chart-container">
+                <canvas id="operatorChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Chart 4: Payment Methods Distribution -->
+            <div class="content-card chart-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Payment Method Share</h3>
+                  <p class="card-subtitle">Tender breakdown (UPI vs Cash vs Card)</p>
+                </div>
+                <div class="chart-tag"><i class="fa-solid fa-wallet"></i> Tender</div>
+              </div>
+              <div class="chart-container doughnut-container">
+                <canvas id="paymentChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ==================== 9. SETTINGS ==================== -->
+        <section class="page-view" id="view-settings">
+          <div class="page-header-flex">
+            <div>
+              <h2 class="view-title">Shop & System Settings</h2>
+              <p class="view-subtitle">Customize shop branding, backup data, and system configurations</p>
+            </div>
+          </div>
+
+          <div class="settings-grid">
+            <!-- Store Profile Config -->
+            <div class="content-card">
+              <div class="card-header">
+                <h3 class="card-title"><i class="fa-solid fa-store"></i> Shop Profile</h3>
+              </div>
+              <form id="settingsForm" class="settings-form">
+                <div class="form-group">
+                  <label class="form-label" for="settingShopName">Shop Display Name</label>
+                  <input type="text" id="settingShopName" class="form-input" value="Sri Krishna Mobiles & Recharges">
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="settingOwnerName">Owner / Cashier Name</label>
+                    <input type="text" id="settingOwnerName" class="form-input" value="Sriram">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="settingContactPhone">Shop Contact Phone</label>
+                    <input type="text" id="settingContactPhone" class="form-input" value="+91 98765 43210">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="settingShopAddress">Address / Location</label>
+                  <input type="text" id="settingShopAddress" class="form-input" value="12/A College Road, Tech Market, Coimbatore">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="settingUpiId">Shop UPI ID (for QR receipts)</label>
+                  <input type="text" id="settingUpiId" class="form-input" value="sriram.recharge@upi">
+                </div>
+                <button type="submit" class="btn btn-primary-glow">
+                  <i class="fa-solid fa-floppy-disk"></i> Save Shop Profile
+                </button>
+              </form>
+            </div>
+
+            <!-- Data Management & Backups -->
+            <div class="content-card">
+              <div class="card-header">
+                <h3 class="card-title"><i class="fa-solid fa-database"></i> Data Backup & Restore</h3>
+              </div>
+              <div class="settings-data-box">
+                <p class="settings-desc">All recharges are stored safely in your browser's persistent localStorage. You can export a full JSON backup or load test datasets for your college presentation.</p>
+
+                <div class="backup-actions-list">
+                  <div class="backup-action-item">
+                    <div>
+                      <strong>Download Backup (JSON)</strong>
+                      <p>Save all recharge records & customer database to disk</p>
+                    </div>
+                    <button class="btn btn-outline" id="btnDownloadJsonBackup">
+                      <i class="fa-solid fa-download"></i> Backup JSON
+                    </button>
+                  </div>
+
+                  <div class="backup-action-item">
+                    <div>
+                      <strong>Load Demo Data</strong>
+                      <p>Populate sample realistic recharge entries for demonstration</p>
+                    </div>
+                    <button class="btn btn-outline" id="btnLoadDemoDataset">
+                      <i class="fa-solid fa-wand-magic-sparkles"></i> Load Demo
+                    </button>
+                  </div>
+
+                  <div class="backup-action-item danger-border">
+                    <div>
+                      <strong class="text-danger">Reset All Data</strong>
+                      <p>Permanently erase all stored transactions</p>
+                    </div>
+                    <button class="btn btn-danger" id="btnClearAllStorage">
+                      <i class="fa-solid fa-trash-can"></i> Reset Storage
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+
+  <!-- ==================== 10. MODALS ==================== -->
+
+  <!-- View Recharge / Receipt Slip Modal -->
+  <div class="modal-overlay" id="viewModal">
+    <div class="modal-dialog receipt-dialog">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <i class="fa-solid fa-receipt text-electric"></i>
+          <span>Recharge Receipt Slip</span>
+        </div>
+        <button class="modal-close-btn" id="closeViewModal" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="modal-body printable-slip" id="printableReceipt">
+        <div class="receipt-card">
+          <!-- Shop Header -->
+          <div class="receipt-header-center">
+            <div class="receipt-icon"><i class="fa-solid fa-bolt-lightning"></i></div>
+            <h3 id="receiptShopName">SRI KRISHNA MOBILES & RECHARGES</h3>
+            <p class="receipt-sub" id="receiptShopAddress">12/A College Road, Tech Market</p>
+            <p class="receipt-contact">Helpdesk: <span id="receiptShopContact">+91 98765 43210</span></p>
+            <div class="receipt-divider-dashed"></div>
+            <div class="receipt-status-pill" id="receiptStatusBadge">SUCCESSFUL</div>
+          </div>
+
+          <!-- Transaction Info -->
+          <div class="receipt-details-list">
+            <div class="receipt-line">
+              <span class="rc-label">Transaction ID:</span>
+              <span class="rc-value" id="rcTxnId">TXN-000000</span>
+            </div>
+            <div class="receipt-line">
+              <span class="rc-label">Date & Time:</span>
+              <span class="rc-value" id="rcDateTime">--</span>
+            </div>
+            <div class="receipt-line">
+              <span class="rc-label">Customer Name:</span>
+              <span class="rc-value" id="rcCustomer">--</span>
+            </div>
+            <div class="receipt-line">
+              <span class="rc-label">Mobile Number:</span>
+              <span class="rc-value" id="rcMobile">--</span>
+            </div>
+            <div class="receipt-line">
+              <span class="rc-label">Telecom Operator:</span>
+              <span class="rc-value" id="rcOperator">--</span>
+            </div>
+            <div class="receipt-line">
+              <span class="rc-label">Plan Details:</span>
+              <span class="rc-value plan-txt" id="rcPlan">--</span>
+            </div>
+            <div class="receipt-line">
+              <span class="rc-label">Payment Mode:</span>
+              <span class="rc-value" id="rcPayment">--</span>
+            </div>
+            <div class="receipt-divider-dashed"></div>
+            <div class="receipt-line total-highlight">
+              <span class="rc-label">TOTAL PAID:</span>
+              <span class="rc-value total-amt" id="rcAmount">₹0</span>
+            </div>
+          </div>
+
+          <!-- Barcode Simulation -->
+          <div class="receipt-barcode-wrap">
+            <div class="barcode-bars"></div>
+            <span class="barcode-num" id="rcBarcodeNum">*TXN-SMARTRECHARGE*</span>
+          </div>
+
+          <div class="receipt-footer-msg">
+            Thank you for visiting! For plan queries call 198.
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="btnCloseViewModal">Close</button>
+        <button class="btn btn-primary-glow" id="btnPrintSlipBtn">
+          <i class="fa-solid fa-print"></i> Print Receipt Slip
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Customer History Modal -->
+  <div class="modal-overlay" id="customerModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <i class="fa-solid fa-user-circle text-electric"></i>
+          <span id="custModalTitle">Customer Profile</span>
+        </div>
+        <button class="modal-close-btn" id="closeCustModal" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="customer-hero-strip">
+          <div class="cust-hero-avatar" id="custHeroAvatar">C</div>
+          <div class="cust-hero-info">
+            <h3 id="custHeroName">Customer Name</h3>
+            <p><i class="fa-solid fa-phone"></i> <span id="custHeroPhone">9876543210</span></p>
+          </div>
+          <div class="cust-hero-stats">
+            <div class="cust-stat-pill">
+              <span class="csp-val" id="custHeroCount">0</span>
+              <span class="csp-lbl">Recharges</span>
+            </div>
+            <div class="cust-stat-pill">
+              <span class="csp-val" id="custHeroTotal">₹0</span>
+              <span class="csp-lbl">Spent</span>
+            </div>
+          </div>
+        </div>
+
+        <h4 class="sub-heading mt-4"><i class="fa-solid fa-clock-rotate-left"></i> Recharge History for this Customer</h4>
+        <div class="table-responsive mt-2">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Txn ID</th>
+                <th>Operator</th>
+                <th>Plan</th>
+                <th>Amount</th>
+                <th>Payment</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="custTxnBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="btnCloseCustModal">Close</button>
+        <button class="btn btn-primary-glow" id="btnCustQuickRecharge">
+          <i class="fa-solid fa-bolt"></i> Recharge Again
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-body text-center p-4">
+        <div class="delete-warning-icon">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h3 class="delete-modal-title">Delete Transaction?</h3>
+        <p class="delete-modal-desc">
+          Are you sure you want to permanently delete transaction <strong id="deleteTargetTxnId">TXN-0000</strong>?
+          This action cannot be undone.
+        </p>
+      </div>
+      <div class="modal-footer justify-center">
+        <button class="btn btn-outline" id="btnCancelDelete">Cancel</button>
+        <button class="btn btn-danger" id="btnConfirmDelete">
+          <i class="fa-solid fa-trash-can"></i> Yes, Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Reset Database Confirmation Modal -->
+  <div class="modal-overlay" id="resetDbModal">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-body text-center p-4">
+        <div class="delete-warning-icon">
+          <i class="fa-solid fa-radiation"></i>
+        </div>
+        <h3 class="delete-modal-title">Reset All Data?</h3>
+        <p class="delete-modal-desc">
+          This will wipe all recharge records and customer history from your local storage.
+        </p>
+      </div>
+      <div class="modal-footer justify-center">
+        <button class="btn btn-outline" id="btnCancelResetDb">Cancel</button>
+        <button class="btn btn-danger" id="btnConfirmResetDb">
+          <i class="fa-solid fa-trash-can"></i> Yes, Wipe Everything
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== 11. TOAST NOTIFICATIONS ==================== -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Main JavaScript App Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
