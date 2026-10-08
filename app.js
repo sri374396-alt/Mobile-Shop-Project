@@ -10,7 +10,7 @@ const SETTINGS_KEY = 'smart_recharge_settings';
 
 // Default Shop Configuration
 const defaultSettings = {
-  shopName: 'Sri Krishna Mobiles & Recharges',
+  shopName: 'SRIRAM MOBLIES',
   ownerName: 'Sriram',
   contactPhone: '+91 98765 43210',
   address: '12/A College Road, Tech Market, Coimbatore',
@@ -183,6 +183,10 @@ function initStorage() {
   if (savedSettings) {
     try {
       currentSettings = Object.assign({}, defaultSettings, JSON.parse(savedSettings));
+      if (currentSettings.shopName === 'Sri Krishna Mobiles & Recharges') {
+        currentSettings.shopName = defaultSettings.shopName;
+        saveSettings();
+      }
     } catch (e) {
       currentSettings = { ...defaultSettings };
     }
@@ -1395,6 +1399,7 @@ function handleSettingsSubmit(e) {
   currentSettings.upiId = el.settingUpiId.value.trim() || defaultSettings.upiId;
 
   saveSettings();
+  updateShopBranding();
   showToast('Shop configuration saved successfully!', 'success', 'Settings Saved');
 }
 
@@ -1437,6 +1442,7 @@ function resetAllStorageData() {
   saveRecharges();
 
   el.resetDbModal.classList.remove('show');
+  updateShopBranding();
   showToast('Storage wiped clean. Ready for fresh records.', 'warning', 'Reset Completed');
   renderDashboard();
   renderHistory();
@@ -1591,9 +1597,18 @@ function attachEventListeners() {
   });
 }
 
+function updateShopBranding() {
+  const shopLabel = document.querySelector('.shop-name-label');
+  if (shopLabel) shopLabel.textContent = currentSettings.shopName;
+  const previewShop = document.querySelector('.preview-shop');
+  if (previewShop) previewShop.textContent = currentSettings.shopName;
+  if (el.receiptShopName) el.receiptShopName.textContent = currentSettings.shopName;
+}
+
 // ==================== 17. APP STARTUP ====================
 document.addEventListener('DOMContentLoaded', () => {
   initStorage();
+  updateShopBranding();
   updateHeaderDate();
   attachEventListeners();
   renderDashboard();
